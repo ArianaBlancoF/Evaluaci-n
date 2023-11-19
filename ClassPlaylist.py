@@ -14,7 +14,7 @@ class Playlist():
             archivo = f.readline()
             for linea in archivo:
                 datos = linea.strip().split(",")
-                cancion = Cancion(int(datos[0]), datos[1], int(datos[2]), int(datos[3]), datos[4])
+                cancion = Cancion(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5])
                 self.canciones.append(cancion)
     
 
