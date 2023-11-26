@@ -26,9 +26,6 @@ class Playlist():
 
 
     def agregar_cancion(self, num_cancion, nombre, artista, num_reproduccion, año, idioma):
-        """
-        Agrega una nueva canción a la playlist y la guarda en el archivo de txt.
-        """
         cancion = Cancion(num_cancion, nombre, artista, num_reproduccion, año, idioma)
         self.canciones.append(cancion)
         with open('Playlist.txt', 'w') as f:
@@ -40,18 +37,18 @@ class Playlist():
 
 
     def buscar_cancion(self, nombre):
+        canciones_nombre = []
         for cancion in self.canciones:
-            if cancion.nombre == nombre:
-                return cancion
-        return None
-
+            if cancion.nombre.upper().strip().startswith(nombre.upper().strip()):
+                canciones_nombre.append(cancion)
+        return canciones_nombre
 
 
 
     def filtrar_por_artista(self, artista):
         canciones_artista = []
         for cancion in self.canciones:
-            if cancion.artista == artista:
+            if cancion.artista.upper().strip().startswith(artista.upper().strip()): 
                 canciones_artista.append(cancion)
         return canciones_artista
 
@@ -63,7 +60,6 @@ class Playlist():
         print(f"Reproduciendo: {cancion.nombre} - {cancion.artista}")
         self.indice_actual += 1
         self.historial.append(cancion) 
-
 
     def reproducir(self):
         self.reproduciendo = True # activar la reproducción
@@ -81,18 +77,17 @@ class Playlist():
                 print("Mezclando canciones...")         
             self.reproducir_cancion() # reproducir la canción actual
 
-
     def control_reproduccion(self, accion):
-        if accion == 0: # Canción anterior    ////////  ESTA ACCIÓN NO CORRE ////// === NO SÉ COMO ARREGLAR EL ERROR
+        if accion == 0: # Canción anterior    ////////  ESTA ACCIÓN NO CORRE BIEN ////// === 
             if self.indice_actual > 0: 
                 self.indice_actual -= 1
-                self.reproducir_cancion() 
+                self.reproducir() 
             else:
                 print("No hay ninguna canción anterior por el momento.")
-        elif accion == 1: # Canción siguiente    //////////   ESTA TAMPOCO CORRE ///////====
+        elif accion == 1: # Canción siguiente    //////////   ESTA TAMPOCO CORRE BIEN ///////====
             if self.indice_actual < len(self.canciones) - 1: 
                 self.indice_actual += 1
-                self.reproducir_cancion() 
+                self.reproducir() 
             else: 
                 self.indice_actual = 0
                 print("La última canción de la lista ya se está reproduciendo.")
@@ -109,6 +104,8 @@ class Playlist():
 
 
 
+
+
     def contar_canciones_historial(self):
         conteo = {} # Diccionario vacío para almacenar el conteo de canciones
         for cancion in self.historial:
@@ -120,6 +117,7 @@ class Playlist():
 
 
 
+
     def mostrar_playlist(self):
         for cancion in self.canciones:
             cancion.mostrar()
@@ -128,7 +126,6 @@ class Playlist():
 
 
 
-    # NO ENTIENDO POR QUÉ NO IMPRIME NADA EL ORDENAR///////=======
     def burbuja_creciente_numero(self):
         n = len(self.canciones)
         intercambiado = True # inicializar la variable intercambiado a True
@@ -152,26 +149,29 @@ class Playlist():
             n -= 1 
 
     def ordenar_por_numero(self, orden):
-        if orden == 0 : # si el orden es creciente
-            self.burbuja_creciente_numero() 
-        elif orden == 1: # si el orden es decreciente
+        if orden == "creciente" : 
+            self.burbuja_creciente_numero()
+            self.mostrar_playlist() 
+        elif orden == "decreciente": 
             self.burbuja_decreciente_numero()
+            self.mostrar_playlist()
         else: 
             print("Orden inválido") 
 
 
 
 
+
     def burbuja_creciente_reproducciones(self):
         n = len(self.canciones)
-        intercambiado = True # inicializar la variable intercambiado a True
-        while intercambiado: # mientras haya algún intercambio
+        intercambiado = True 
+        while intercambiado: 
             intercambiado = False 
             for j in range(0, n-1): 
-                if self.canciones[j].num_reproducciones > self.canciones[j + 1].num_reproducciones: 
+                if self.canciones[j].num_reproduccion > self.canciones[j + 1].num_reproduccion: 
                     self.canciones[j], self.canciones[j + 1] = self.canciones[j + 1], self.canciones[j] 
-                    intercambiado = True # marcar que se ha hecho un intercambio
-            n -= 1 # reducir el tamaño de la lista a ordenar en uno
+                    intercambiado = True 
+            n -= 1 
 
     def burbuja_decreciente_reproducciones(self):
         n = len(self.canciones)
@@ -179,18 +179,21 @@ class Playlist():
         while intercambiado: 
             intercambiado = False 
             for j in range(0, n-1): 
-                if self.canciones[j].num_reproducciones < self.canciones[j + 1].num_reproducciones: 
+                if self.canciones[j].num_reproduccion < self.canciones[j + 1].num_reproduccion: 
                     self.canciones[j], self.canciones[j + 1] = self.canciones[j + 1], self.canciones[j] 
                     intercambiado = True 
             n -= 1 
 
     def ordenar_por_reproducciones(self, orden):
-        if orden == 0 : # si el orden es creciente
-            self.burbuja_creciente_reproducciones() # ordenar la lista de canciones por el número de reproducciones de forma creciente usando el método burbuja
-        elif orden == 1: # si el orden es decreciente
-            self.burbuja_decreciente_reproducciones() # ordenar la lista de canciones por el número de reproducciones de forma decreciente usando el método burbuja
-        else: # si el orden no es ni creciente ni decreciente
-            print("Orden inválido") # imprimir un mensaje de orden inválido
+        if orden == "creciente" : 
+            self.burbuja_creciente_reproducciones()
+            self.mostrar_playlist() 
+        elif orden == "decreciente": 
+            self.burbuja_decreciente_reproducciones()
+            self.mostrar_playlist() 
+        else: 
+            print("Orden inválido") 
+
 
 
 
@@ -198,14 +201,14 @@ class Playlist():
     
     def burbuja_creciente_nombre(self):
         n = len(self.canciones)
-        intercambiado = True # inicializar la variable intercambiado a True
-        while intercambiado: # mientras haya algún intercambio
+        intercambiado = True 
+        while intercambiado: 
             intercambiado = False 
             for j in range(0, n-1): 
-                if self.canciones[j].nombre > self.canciones[j + 1].nombre: # si el nombre de la canción actual es mayor alfabéticamente que el de la siguiente
-                    self.canciones[j], self.canciones[j + 1] = self.canciones[j + 1], self.canciones[j] # intercambiar las canciones
-                    intercambiado = True # marcar que se ha hecho un intercambio
-            n -= 1 # reducir el tamaño de la lista a ordenar en uno
+                if self.canciones[j].nombre > self.canciones[j + 1].nombre: 
+                    self.canciones[j], self.canciones[j + 1] = self.canciones[j + 1], self.canciones[j] 
+                    intercambiado = True 
+            n -= 1 
 
     def burbuja_decreciente_nombre(self):
         n = len(self.canciones)
@@ -213,18 +216,20 @@ class Playlist():
         while intercambiado: 
             intercambiado = False 
             for j in range(0, n-1): 
-                if self.canciones[j].nombre < self.canciones[j + 1].nombre: # si el nombre de la canción actual es menor alfabéticamente que el de la siguiente
-                    self.canciones[j], self.canciones[j + 1] = self.canciones[j + 1], self.canciones[j] # intercambiar las canciones
+                if self.canciones[j].nombre < self.canciones[j + 1].nombre: 
+                    self.canciones[j], self.canciones[j + 1] = self.canciones[j + 1], self.canciones[j] 
                     intercambiado = True 
             n -= 1 
 
     def ordenar_por_nombre(self, orden):
-        if orden == 0 : # si el orden es creciente
-            self.burbuja_creciente_nombre() # ordenar la lista de canciones por el nombre de forma creciente usando el método burbuja
-        elif orden == 1: # si el orden es decreciente
-            self.burbuja_decreciente_nombre() # ordenar la lista de canciones por el nombre de forma decreciente usando el método burbuja
-        else: # si el orden no es ni creciente ni decreciente
-            print("Orden inválido") # imprimir un mensaje de orden inválido
+        if orden == "creciente": 
+            self.burbuja_creciente_nombre()
+            self.mostrar_playlist() 
+        elif orden == "decreciente": 
+            self.burbuja_decreciente_nombre()
+            self.mostrar_playlist() 
+        else:
+            print("Orden inválido") 
 
 
 
